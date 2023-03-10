@@ -61,6 +61,8 @@ const Property = new Schema({
         required: false, // true for production
 
     }
+}, {
+    timestamps: true
 })
 
 export default model("Property", Property)
