@@ -66,11 +66,10 @@ class AuthController{
         }
     }
     async logout(req, res) {
-        try{
-
-        }catch (error){
-
-        }
+        res.clearCookie("accessToken", {
+            sameSite: "none",
+            secure: true,
+        }).status(200).send("User has been logged out.")
     }
 }
 export default AuthController;
