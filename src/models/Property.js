@@ -22,7 +22,7 @@ const Property = new Schema({
         required: true,
     },
     build_year:{
-        type: String,
+        type: Number,
         required: true,
     },
     bedrooms: {
@@ -42,7 +42,7 @@ const Property = new Schema({
     },
     property_type: {
         type: String,
-        enum: ["Any", "Condo", "Multi Family Home", "Farm", "Single Family Home", "Townhouse", "Apartment", "Land"],
+        enum: ["Any", "Condo", "Multi Family Home", "Farm", "Single Family Home", "Townhouse", "Apartment", "Land", "Duplex"],
         default: "Any",
         required: true
     },
@@ -60,6 +60,9 @@ const Property = new Schema({
         type: [String],
         required: false, // true for production
 
+    },
+    agentId: {
+        type: String, ref: "User"
     }
 }, {
     timestamps: true

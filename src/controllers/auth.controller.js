@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken"
 class AuthController{
     async sign_up(req, res, next) {
         try{
-            const {name, email, phone, password} = req.body;
+            const {name, email, phone, password, isAgent} = req.body;
 
             const candidate = await User.findOne({email})
 
@@ -21,7 +21,7 @@ class AuthController{
                 email: email,
                 phone: phone,
                 password: hashedPassword,
-                ...req.body
+                isAgent: isAgent
 
             })
 
@@ -33,7 +33,7 @@ class AuthController{
             next(error)
         }
     }
-    async sign_in(req, res) {
+    async sign_in(req, res, next) {
         try{
             const {email, password} = req.body;
             const user = await User.findOne({email})
@@ -57,12 +57,15 @@ class AuthController{
 
             const {...info} = user._doc;
 
+
             res.cookie("accessToken", token, {
                 httpOnly: true,
             }).status(200).send(info)
 
-        }catch (error){
+            console.log(req)
 
+        }catch (error){
+            next(error)
         }
     }
     async logout(req, res) {

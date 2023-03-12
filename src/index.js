@@ -4,6 +4,7 @@ import dotenv from "dotenv"
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser"
 import authRoute from "./routes/auth.route.js"
+import propertyRoute from "./routes/property.route.js";
 
 const app = express();
 
@@ -22,13 +23,12 @@ const connect = async () => {
 
 app.use(cors());
 app.use(express.json())
-// app.use(cookieParser);
+app.use(cookieParser());
 
 app.use("/auth", authRoute)
 
-// app.get("/", (req, res) =>{
-//     res.send("hello")
-// })
+app.use('/property', propertyRoute)
+
 
 
 
