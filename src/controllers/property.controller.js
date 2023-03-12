@@ -71,6 +71,26 @@ class PropertyController{
             next(error)
         }
     }
+
+    async deleteProperty(req, res, next){
+
+        try{
+
+            const findProperty = await Property.findById(req.params.id)
+
+            if(req.userId !== findProperty.agentId){
+                return res.status(403).json({"error": "You can delete only your property"})
+            }
+
+            await Property.findByIdAndDelete(req.params.id)
+            res.status(200).send("Property has been deleted successfully!")
+
+        }catch (error){
+            next(error)
+        }
+    }
+
+
 }
 
 export default PropertyController;
