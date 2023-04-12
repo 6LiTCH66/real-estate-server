@@ -32,6 +32,10 @@ app.use("/user", userRoute)
 
 //http://localhost:3000/auth/sign-up
 
+app.get('/', (req, res) => {
+    res.send('Hello World!')
+})
+
 app.listen(PORT, async () => {
     await connect()
     console.log(`App is running at http://localhost:${PORT}`)
