@@ -3,9 +3,9 @@ import cors from "cors"
 import dotenv from "dotenv"
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser"
-import authRoute from "./routes/auth.route.js"
-import propertyRoute from "./routes/property.route.js";
-import userRoute from "./routes/user.route.js";
+import authRoute from "./src/routes/auth.route.js"
+import propertyRoute from "./src/routes/property.route.js";
+import userRoute from "./src/routes/user.route.js";
 
 const app = express();
 
