@@ -35,13 +35,15 @@ class AuthController{
     }
     async sign_in(req, res, next) {
         try{
-            const {email, password} = req.body;
+            const user_password = req.body.password;
+
+            const {email} = req.body;
             const user = await User.findOne({email})
 
             if(!user){
                 return res.status(400).json({message: `User with email ${email} is not found!`})
             }
-            const validPassword = bcrypt.compareSync(password, user.password)
+            const validPassword = bcrypt.compareSync(user_password, user.password)
 
             if(!validPassword){
                 return res.status(400).json({message: "Password is invalid!"})
@@ -55,14 +57,13 @@ class AuthController{
                 process.env.JWT_TOKEN
             )
 
-            const {...info} = user._doc;
+            const {password, ...info} = user._doc;
 
 
             res.cookie("accessToken", token, {
                 httpOnly: true,
             }).status(200).send(info)
 
-            console.log(req)
 
         }catch (error){
             next(error)

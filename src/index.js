@@ -30,9 +30,7 @@ app.use("/auth", authRoute)
 app.use('/property', propertyRoute)
 app.use("/user", userRoute)
 
-
-
-
+//http://localhost:3000/auth/sign-up
 
 app.listen(PORT, async () => {
     await connect()
