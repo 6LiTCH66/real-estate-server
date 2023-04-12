@@ -48,10 +48,32 @@ class PropertyController{
 
         const q = req.query;
 
+        const page = parseInt(req.query.page)
+        const limit = parseInt(req.query.limit)
+
+        const startIndex = (page - 1) * limit
+        const endIndex = page * limit
+
+        const results = {}
+
+        if (endIndex < await Property.countDocuments().exec()) {
+            results.next = {
+                page: page + 1,
+                limit: limit
+            }
+        }
+
+        if (startIndex > 0) {
+            results.previous = {
+                page: page - 1,
+                limit: limit
+            }
+        }
+
         const filter = {
             ...(q.state_province && {state_province: {$regex: q.state_province, $options: "i"}}),
             ...(q.city && {city: {$regex: q.city, $options: "i"}}),
-            ...(q.country && {country: {$regex :q.country, $options: "i"}}),
+            ...(q.country && {country: {$regex: q.country, $options: "i"}}),
             ...(q.zipcode && {zipcode: q.zipcode}),
             ...(q.property_type && {property_type: {$regex: q.property_type, $options: "i"}}),
             ...(q.property_status && {property_status: {$regex: q.property_status, $options: "i"}}),
@@ -64,8 +86,10 @@ class PropertyController{
         }
 
         try{
-            const properties = await Property.find(filter);
-            res.status(200).json(properties)
+            // const properties = await Property.find(filter);
+            results.properties = await Property.find(filter).limit(limit).skip(startIndex).exec()
+
+            res.status(200).json(results)
 
         }catch (error){
             next(error)
