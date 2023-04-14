@@ -1,5 +1,6 @@
 import createError from "../utils/createError.js";
 import Property from "../models/Property.js";
+import properties from "../data.json" assert { type: "json" };
 
 class PropertyController{
     async createProperty(req, res, next){
@@ -8,12 +9,15 @@ class PropertyController{
             return res.status(403).json({"error": "Only agent can create a property!"})
         }
 
+
+
         try{
 
             const property = new Property({
                 ...req.body,
                 agentId: req.userId
             });
+
 
 
             const savedProperty = await property.save();

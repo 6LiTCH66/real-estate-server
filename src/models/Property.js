@@ -61,6 +61,14 @@ const Property = new Schema({
         required: false, // true for production
 
     },
+    garage: {
+        type: Number,
+        required: true
+    },
+    pricePerSqft: {
+        type: Number,
+        required: true,
+    },
     agentId: {
         type: String, ref: "User"
     }
