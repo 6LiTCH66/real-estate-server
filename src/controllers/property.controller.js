@@ -1,6 +1,5 @@
 import createError from "../utils/createError.js";
 import Property from "../models/Property.js";
-import properties from "../data.json" assert { type: "json" };
 
 class PropertyController{
     async createProperty(req, res, next){
