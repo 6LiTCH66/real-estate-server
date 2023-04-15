@@ -30,7 +30,6 @@ app.use("/auth", authRoute)
 app.use('/property', propertyRoute)
 app.use("/user", userRoute)
 
-//http://localhost:3000/auth/sign-up
 
 app.get('/', (req, res) => {
     res.send('Hello World!')

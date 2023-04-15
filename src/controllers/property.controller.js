@@ -8,8 +8,6 @@ class PropertyController{
             return res.status(403).json({"error": "Only agent can create a property!"})
         }
 
-
-
         try{
 
             const property = new Property({
@@ -30,7 +28,7 @@ class PropertyController{
 
     }
 
-    async getSingleProperty(req, res, next){
+    async getSingleProperty(req, res){
         try{
             const property = await Property.findById(req.params.id)
 
@@ -42,9 +40,6 @@ class PropertyController{
         }catch (error){
             return res.status(404).json({"error": "Property not found!"})
         }
-
-
-
     }
 
     async getAllProperties(req, res, next){
