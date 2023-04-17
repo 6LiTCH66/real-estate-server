@@ -73,7 +73,10 @@ class PropertyController{
             ...(q.city && {city: {$regex: q.city, $options: "i"}}),
             ...(q.country && {country: {$regex: q.country, $options: "i"}}),
             ...(q.zipcode && {zipcode: q.zipcode}),
-            ...(q.property_type && {property_type: {$regex: q.property_type, $options: "i"}}),
+
+            ...(q.property_type && {property_type:
+                    { $regex: new RegExp(typeof q.property_type === "object" ? q.property_type.join("|") : q.property_type, "i") }
+            }),
             ...(q.property_status && {property_status: {$regex: q.property_status, $options: "i"}}),
             ...((q.min || q.max) && {
                 price: {
