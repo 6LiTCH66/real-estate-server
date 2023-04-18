@@ -78,6 +78,8 @@ class PropertyController{
                     { $regex: new RegExp(typeof q.property_type === "object" ? q.property_type.join("|") : q.property_type, "i") }
             }),
             ...(q.property_status && {property_status: {$regex: q.property_status, $options: "i"}}),
+            ...(q.beds && {bedrooms: {$gte: q.beds}}),
+            ...(q.baths && {bathrooms: {$gte: q.baths}}),
             ...((q.min || q.max) && {
                 price: {
                     ...(q.min && { $gt: q.min }),
@@ -85,10 +87,11 @@ class PropertyController{
                 },
             }),
         }
+        const price_sort = (q.sort && {price: q.sort === "desc" ? -1 : q.sort === "asc" ? 1 : ""})
 
         try{
             // const properties = await Property.find(filter);
-            results.properties = await Property.find(filter).limit(limit).skip(startIndex).exec()
+            results.properties = await Property.find(filter).sort(price_sort).limit(limit).skip(startIndex).exec()
 
             res.status(200).json(results)
 
