@@ -82,11 +82,12 @@ class PropertyController{
             ...(q.baths && {bathrooms: {$gte: q.baths}}),
             ...((q.min || q.max) && {
                 price: {
-                    ...(q.min && { $gt: q.min }),
-                    ...(q.max && { $lt: q.max }),
+                    ...(q.min && { $gte: q.min }),
+                    ...(q.max && { $lte: q.max }),
                 },
             }),
         }
+
         const price_sort = (q.sort && {price: q.sort === "desc" ? -1 : q.sort === "asc" ? 1 : ""})
 
         try{
