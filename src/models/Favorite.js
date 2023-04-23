@@ -5,7 +5,7 @@ const Favorite = new Schema({
         type: String,
         required: true
     },
-    propertyId: {type:String, ref: "Property"}
+    propertyId: {type: String, ref: "Property"}
 })
 
 export default model("Favorite", Favorite)
