@@ -11,6 +11,7 @@ class UserController{
                 return res.status(404).json({"error": "Property not found!"})
             }
 
+
             const favouriteDuplicate = await Favorite.find({userId: req.userId, propertyId: req.params.id});
 
             if (favouriteDuplicate.length){
@@ -25,7 +26,9 @@ class UserController{
 
             await favourite.save();
 
-            res.status(200).json({"message": "Property has been added to your favourite successfully!"})
+            const favouriteList = await Favorite.find({userId: req.userId}).populate("propertyId").select("propertyId")
+
+            res.status(200).json(favouriteList)
 
         }catch (error){
             next(error)
@@ -53,7 +56,11 @@ class UserController{
 
             await Favorite.findOneAndDelete({propertyId: req.params.id})
 
-            res.status(200).json({"message": "Property has been deleted from your favourite list!"})
+            const favouriteList = await Favorite.find({userId: req.userId}).populate("propertyId").select("propertyId")
+
+            res.status(200).json(favouriteList)
+
+            // res.status(200).json({"message": "Property has been deleted from your favourite list!"})
 
         }catch (error){
             next(error)
