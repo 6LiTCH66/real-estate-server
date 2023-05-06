@@ -62,8 +62,8 @@ class AuthController{
 
             res.cookie("accessToken", token, {
                 httpOnly: true,
-                secure: true,
-                sameSite: true
+                secure: false,
+                sameSite: true,
             }).status(200).send(info)
 
 
@@ -73,7 +73,7 @@ class AuthController{
     }
     async logout(req, res) {
         res.clearCookie("accessToken", {
-            secure: true,
+            secure: false,
             httpOnly: true,
             sameSite: true
         }).status(200).send("User has been logged out.")
