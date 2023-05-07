@@ -6,8 +6,8 @@ import cookieParser from "cookie-parser"
 import authRoute from "./routes/auth.route.js"
 import propertyRoute from "./routes/property.route.js";
 import userRoute from "./routes/user.route.js";
-import sessionMiddleware from "./middlewares/sessionMiddleware.js"
-import passport from "./config/passport.js"
+// import sessionMiddleware from "./middlewares/sessionMiddleware.js"
+// import passport from "./config/passport.js"
 
 const app = express();
 app.set("trust proxy", 1);
@@ -38,11 +38,6 @@ const corsOptions ={
 app.use(cors(corsOptions));
 app.use(express.json())
 app.use(cookieParser());
-
-app.use(express.urlencoded({ extended: true }));
-app.use(sessionMiddleware);
-app.use(passport.initialize());
-app.use(passport.session());
 
 app.use("/auth", authRoute)
 app.use('/property', propertyRoute)

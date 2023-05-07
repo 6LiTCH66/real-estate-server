@@ -4,7 +4,7 @@ import Property from "../models/Property.js";
 class PropertyController{
     async createProperty(req, res, next){
 
-        if(!req.user.isAgent){
+        if(!req.isAgent){
             return res.status(403).json({"error": "Only agent can create a property!"})
         }
 
@@ -12,7 +12,7 @@ class PropertyController{
 
             const property = new Property({
                 ...req.body,
-                agentId: req.user._id
+                agentId: req.userId
             });
 
 
@@ -107,7 +107,7 @@ class PropertyController{
 
             const findProperty = await Property.findById(req.params.id)
 
-            if(req.user._id.toString() !== findProperty.agentId){
+            if(req.userId !== findProperty.agentId){
                 return res.status(403).json({"error": "You can delete only your property"})
             }
 

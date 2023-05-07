@@ -1,14 +1,21 @@
 import jwt from "jsonwebtoken"
 import createError from "../utils/createError.js";
 
+const verifyToken = (req, res, next) => {
+    const token = req.cookies.accessToken;
 
-const ensureAuthenticated = (req, res, next) => {
-    if (req.isAuthenticated()) {
-        return next();
+    if (!token){
+        return next(createError(401, "A token is required for authentication!"))
     }
-    req.session.destroy(()=>{
-        res.clearCookie('connect.sid').status(200).send("You are not authenticated");
-    });
+
+    jwt.verify(token, process.env.JWT_TOKEN, async (error, payload) => {
+        if(error){
+            return next(createError(403, "Token is not valid!"))
+        }
+        req.userId = payload.id;
+        req.isAgent = payload.isAgent;
+        next();
+    })
 }
 
-export default ensureAuthenticated;
+export default verifyToken;

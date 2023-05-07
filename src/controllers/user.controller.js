@@ -12,21 +12,21 @@ class UserController{
             }
 
 
-            const favouriteDuplicate = await Favorite.find({userId: req.user._id, propertyId: req.params.id});
+            const favouriteDuplicate = await Favorite.find({userId: req.userId, propertyId: req.params.id});
 
             if (favouriteDuplicate.length){
                 return res.status(400).json({"message": "This property already in your favourite list."})
             }
 
             const favourite = new Favorite({
-                userId: req.user._id,
+                userId: req.userId,
                 propertyId: req.params.id
 
             })
 
             await favourite.save();
 
-            const favouriteList = await Favorite.find({userId: req.user._id}).populate("propertyId").select("propertyId")
+            const favouriteList = await Favorite.find({userId: req.userId}).populate("propertyId").select("propertyId")
 
             res.status(200).json(favouriteList)
 
@@ -37,7 +37,7 @@ class UserController{
 
     async getFavourites(req, res, next){
         try{
-            const favourite = await Favorite.find({userId: req.user._id}).populate("propertyId").select("propertyId")
+            const favourite = await Favorite.find({userId: req.userId}).populate("propertyId").select("propertyId")
             res.status(200).json(favourite)
 
         }catch (error){
@@ -48,7 +48,7 @@ class UserController{
     async deleteFavourite(req, res, next){
         try{
 
-            const favourite = await Favorite.findOne({userId: req.user._id, propertyId: req.params.id})
+            const favourite = await Favorite.findOne({userId: req.userId, propertyId: req.params.id})
 
             if (!favourite){
                 return res.status(403).json({"message": "Property not found in your favourite list!"})
@@ -56,7 +56,7 @@ class UserController{
 
             await Favorite.findOneAndDelete({propertyId: req.params.id})
 
-            const favouriteList = await Favorite.find({userId: req.user._id}).populate("propertyId").select("propertyId")
+            const favouriteList = await Favorite.find({userId: req.userId}).populate("propertyId").select("propertyId")
 
             res.status(200).json(favouriteList)
 
