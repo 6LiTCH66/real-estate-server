@@ -10,6 +10,7 @@ import sessionMiddleware from "./middlewares/sessionMiddleware.js"
 import passport from "./config/passport.js"
 
 const app = express();
+app.set("trust proxy", 1);
 
 dotenv.config();
 
