@@ -13,10 +13,10 @@ const sessionMiddleware = session({
     }),
     cookie: {
         maxAge: 1000 * 60 * 60 * 24, // 1 day
-        path: '/',
-        secure: false,
-        httpOnly: true,
-        sameSite: true,
+        // path: '/',
+        // secure: false,
+        // httpOnly: true,
+        // sameSite: true,
     },
 });
 
