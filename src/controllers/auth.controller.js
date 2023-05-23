@@ -59,12 +59,12 @@ class AuthController{
 
             const {password, ...info} = user._doc;
 
-
+            // sameSite: 'none'
             res.cookie("accessToken", token, {
                 httpOnly: true,
                 maxAge: 15 * 60 * 1000,
                 overwrite: true,
-                sameSite: "none",
+                sameSite: true,
                 secure: true
             }).status(200).send(info)
 

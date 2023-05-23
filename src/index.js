@@ -52,3 +52,5 @@ app.listen(PORT, async () => {
     await connect()
     console.log(`App is running at http://localhost:${PORT}`)
 })
+
+export default app;
