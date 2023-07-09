@@ -1,5 +1,6 @@
 import Favorite from "../models/Favorite.js";
 import Property from "../models/Property.js";
+import User from "../models/User.js";
 class UserController{
 
     async addToFavorite(req, res, next){
@@ -64,6 +65,23 @@ class UserController{
 
         }catch (error){
             next(error)
+        }
+    }
+
+
+    async getUser(req, res, next){
+        try{
+            const user_id = req.userId
+
+            const user = await User.findById(user_id)
+
+            const {password, ...info} = user._doc;
+
+            res.status(200).json(info)
+
+        }catch (error){
+            res.status(200).json(null)
+            next()
         }
     }
 }
