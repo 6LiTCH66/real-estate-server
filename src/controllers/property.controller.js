@@ -1,6 +1,7 @@
 import createError from "../utils/createError.js";
 import Property from "../models/Property.js";
 
+
 class PropertyController{
     async createProperty(req, res, next){
 
@@ -12,8 +13,12 @@ class PropertyController{
 
             const property = new Property({
                 ...req.body,
-                agentId: req.userId
+                agentId: req.userId,
+                images: req.files.map((image, index) => {return "https://real-estate-server-production.up.railway.app/" + image.path})
             });
+
+
+            // console.log(property)
 
 
 

@@ -6,6 +6,10 @@ import cookieParser from "cookie-parser"
 import authRoute from "./routes/auth.route.js"
 import propertyRoute from "./routes/property.route.js";
 import userRoute from "./routes/user.route.js";
+import * as path from "path";
+import {fileURLToPath} from "url"
+import { dirname } from 'path';
+import * as fs from "fs";
 // import sessionMiddleware from "./middlewares/sessionMiddleware.js"
 // import passport from "./config/passport.js"
 
@@ -33,7 +37,7 @@ const corsOptions ={
     origin: true,
 }
 
-
+app.use('/images', express.static('images'));
 
 app.use(cors(corsOptions));
 app.use(express.json())
