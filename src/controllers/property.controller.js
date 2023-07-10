@@ -18,9 +18,6 @@ class PropertyController{
             });
 
 
-            // console.log(property)
-
-
 
             const savedProperty = await property.save();
             return res.status(201).json(savedProperty)
