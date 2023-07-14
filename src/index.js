@@ -6,17 +6,32 @@ import cookieParser from "cookie-parser"
 import authRoute from "./routes/auth.route.js"
 import propertyRoute from "./routes/property.route.js";
 import userRoute from "./routes/user.route.js";
-import * as path from "path";
-import {fileURLToPath} from "url"
-import { dirname } from 'path';
-import * as fs from "fs";
-// import sessionMiddleware from "./middlewares/sessionMiddleware.js"
-// import passport from "./config/passport.js"
+import {Server} from "socket.io";
+import http from "http";
 
 const app = express();
 app.set("trust proxy", 1);
 
 dotenv.config();
+
+const server = http.createServer(app);
+
+const io = new Server(server, {
+    cors: {
+        origin: "http://localhost:3001",
+        methods: ["GET", "POST"]
+    }
+})
+io.on("connection", (socket) => {
+
+    socket.on("join_room", (data) => {
+        socket.join(data);
+    })
+
+    socket.on("send_message", (data) => {
+        socket.to(data.room).emit("receive_message", data)
+    })
+})
 
 const PORT = process.env.PORT || 3005
 
@@ -52,7 +67,7 @@ app.get('/', (req, res) => {
     res.send('Hello World!')
 })
 
-app.listen(PORT, async () => {
+server.listen(PORT, async () => {
     await connect()
     console.log(`App is running at http://localhost:${PORT}`)
 })

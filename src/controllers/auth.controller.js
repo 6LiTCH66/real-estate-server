@@ -15,13 +15,11 @@ class AuthController{
             }
 
             const hashedPassword = bcrypt.hashSync(password, 5);
-
+            console.log(req.body)
             const user = new User({
-                name: name,
-                email: email,
-                phone: phone,
-                password: hashedPassword,
-                isAgent: isAgent
+
+                ...req.body,
+                password: hashedPassword
 
             })
 
@@ -62,7 +60,7 @@ class AuthController{
 
             res.cookie("accessToken", token, {
                 httpOnly: true,
-                maxAge: 15 * 60 * 1000,
+                maxAge: 24 * 60 * 60 * 1000,
                 overwrite: true,
                 sameSite: "none",
                 secure: true
