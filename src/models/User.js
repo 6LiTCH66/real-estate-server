@@ -26,6 +26,12 @@ const User = new Schema({
         type: Boolean,
         default: false
     },
+    rooms: [
+        {
+            type: String,
+            ref: "Room"
+        }
+    ]
 },{
     timestamps: true
 })

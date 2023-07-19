@@ -6,8 +6,12 @@ import cookieParser from "cookie-parser"
 import authRoute from "./routes/auth.route.js"
 import propertyRoute from "./routes/property.route.js";
 import userRoute from "./routes/user.route.js";
+import chatRoute from "./routes/chat.route.js";
+
 import {Server} from "socket.io";
 import http from "http";
+import Message from "./models/Message.js";
+import Room from "./models/Room.js";
 
 const app = express();
 app.set("trust proxy", 1);
@@ -25,15 +29,29 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
 
     socket.on("join_room", (data) => {
+
         socket.join(data);
     })
 
-    socket.on("send_message", (data) => {
+    socket.on("send_message", async (data) => {
+        const newMessage = new Message()
+        const room = await Room.findById(data.room);
+
+        newMessage.content = data.content
+        newMessage.user = data.user._id
+        newMessage.room = data.room
+
+        room.messages.push(newMessage)
+
+        await newMessage.save()
+        await room.save()
+
         socket.to(data.room).emit("receive_message", data)
     })
 })
 
 const PORT = process.env.PORT || 3005
+
 
 
 
@@ -61,6 +79,8 @@ app.use(cookieParser());
 app.use("/auth", authRoute)
 app.use('/property', propertyRoute)
 app.use("/user", userRoute)
+app.use("/chat", chatRoute)
+
 
 
 app.get('/', (req, res) => {
