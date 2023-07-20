@@ -5,7 +5,8 @@ import ObjectId from "mongoose"
 class ChatController{
 
     async createRoom(req, res, next){
-        const {message: userMessage, agentId} = req.body
+        const {message: userMessage, agentId, first_name, last_name, phone} = req.body
+
 
         try{
             const roomDuplicate = await Room.find({users: [req.userId, agentId]})
@@ -13,6 +14,7 @@ class ChatController{
             const agentUser = await User.findById(agentId)
 
             if (!roomDuplicate.length){
+                // Creating a room if the room with agent is not created yet
                 const room = new Room();
                 const message = new Message();
 
@@ -24,7 +26,16 @@ class ChatController{
                 room.messages.push(message)
 
                 user.rooms.push(room._id)
+                message.readBy.push(user._id)
+
                 agentUser.rooms.push(room._id)
+
+                if (first_name && last_name && phone){
+                    user.first_name = first_name
+                    user.last_name = last_name
+                    user.phone = phone
+                    // await currentUser.save();
+                }
 
                 await user.save()
                 await agentUser.save()
@@ -32,15 +43,18 @@ class ChatController{
                 await message.save()
 
 
-
-
             }else{
+                // Just sent a new message if the room with agent is created
                 const newMessage = new Message();
+                const room = await Room.findById(roomDuplicate[0]._id)
+
                 newMessage.content = userMessage
                 newMessage.user = req.userId
                 newMessage.room = roomDuplicate[0]._id
+                newMessage.readBy.push(user._id)
+
                 await newMessage.save()
-                const room = await Room.findById(roomDuplicate[0]._id)
+
                 room.messages.push(newMessage)
                 await room.save()
 
@@ -87,7 +101,6 @@ class ChatController{
                     { path: 'user', select: "-password" }
                 ]
             })
-            console.log(roomsMessages)
             res.status(200).send(roomsMessages)
 
         }catch (err){

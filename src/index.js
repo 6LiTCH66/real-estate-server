@@ -26,11 +26,15 @@ const io = new Server(server, {
         methods: ["GET", "POST"]
     }
 })
+const lastMessages = {};
+
 io.on("connection", (socket) => {
 
     socket.on("join_room", (data) => {
 
         socket.join(data);
+
+
     })
 
     socket.on("send_message", async (data) => {
@@ -46,8 +50,15 @@ io.on("connection", (socket) => {
         await newMessage.save()
         await room.save()
 
+        lastMessages[data.room] = data;
+
         socket.to(data.room).emit("receive_message", data)
+
+        socket.broadcast.emit(data.room, data)
+        socket.emit(data.room, data)
+
     })
+
 })
 
 const PORT = process.env.PORT || 3005
