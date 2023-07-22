@@ -14,6 +14,7 @@ class ChatController{
             const agentUser = await User.findById(agentId)
 
             if (!roomDuplicate.length){
+
                 // Creating a room if the room with agent is not created yet
                 const room = new Room();
                 const message = new Message();
@@ -34,7 +35,6 @@ class ChatController{
                     user.first_name = first_name
                     user.last_name = last_name
                     user.phone = phone
-                    // await currentUser.save();
                 }
 
                 await user.save()
@@ -94,7 +94,6 @@ class ChatController{
         const {params: { room_id }} = req.query;
 
         try{
-            // const
             const roomsMessages = await Room.findById(room_id).populate({
                 path: "messages",
                 populate: [
@@ -106,6 +105,47 @@ class ChatController{
         }catch (err){
             res.status(400).json({error: "Cannot load your messages history!"})
         }
+    }
+    async readMessage(req, res, next){
+
+        const {params: { room_id }} = req.query;
+
+        // const countUnreadMessages = await Message.aggregate([
+        //     { $match: { readBy: { $ne: req.userId } } },
+        //     { $group: { _id: '$room', count: { $sum: 1 } } },
+        // ]);
+
+        const unreadCount = await Message.countDocuments({
+            room: room_id,
+            readBy: { $ne: req.userId },
+        });
+        // console.log(unreadCount)
+        res.status(200).send("ok")
+
+        // const message = await Message.findById(room_id)
+        //
+        // if (!message.readBy.includes(room_id)){
+        //     message.readBy.push(room_id)
+        //     await message.save();
+        // }
+    }
+
+    async getUnreadMessage(req, res, next){
+
+        const {params: { room_id }} = req.query;
+
+        // const countUnreadMessages = await Message.aggregate([
+        //     { $match: { readBy: { $ne: req.userId } } },
+        //     { $group: { _id: '$room', count: { $sum: 1 } } },
+        // ]);
+
+        const unreadCount = await Message.countDocuments({
+            room: room_id,
+            readBy: { $ne: req.userId },
+        });
+
+
+        res.status(200).json({unreadCount})
     }
 }
 

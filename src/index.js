@@ -12,6 +12,7 @@ import {Server} from "socket.io";
 import http from "http";
 import Message from "./models/Message.js";
 import Room from "./models/Room.js";
+import message from "./models/Message.js";
 
 const app = express();
 app.set("trust proxy", 1);
@@ -26,16 +27,33 @@ const io = new Server(server, {
         methods: ["GET", "POST"]
     }
 })
-const lastMessages = {};
-
 io.on("connection", (socket) => {
 
-    socket.on("join_room", (data) => {
+    socket.on("join_room", async (data) => {
+        socket.join(data.room_id);
+        const messages = await Message.find({room: data.room_id})
 
-        socket.join(data);
+        const promises = messages.map(async (message) => {
+
+            if (!message.readBy.includes(data.user_id)){
+                message.readBy.push(data.user_id)
+
+            }
+
+            return message.save()
+
+        })
+
+        await Promise.all(promises);
+
+        socket.emit("readMessage")
 
 
     })
+
+    socket.on('leaveRoom', (roomId) => {
+        socket.leave(roomId);
+    });
 
     socket.on("send_message", async (data) => {
         const newMessage = new Message()
@@ -45,17 +63,21 @@ io.on("connection", (socket) => {
         newMessage.user = data.user._id
         newMessage.room = data.room
 
+        newMessage.readBy.push(data.user._id)
+
         room.messages.push(newMessage)
 
         await newMessage.save()
         await room.save()
 
-        lastMessages[data.room] = data;
 
-        socket.to(data.room).emit("receive_message", data)
+        socket.to(data.room).emit(`receive_message_${data.room}`, data)
 
         socket.broadcast.emit(data.room, data)
+
         socket.emit(data.room, data)
+
+
 
     })
 
