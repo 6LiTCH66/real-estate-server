@@ -107,27 +107,27 @@ class ChatController{
         }
     }
     async readMessage(req, res, next){
-
         const {params: { room_id }} = req.query;
 
-        // const countUnreadMessages = await Message.aggregate([
-        //     { $match: { readBy: { $ne: req.userId } } },
-        //     { $group: { _id: '$room', count: { $sum: 1 } } },
-        // ]);
+        const messages = await Message.find({room: room_id})
+        const room  = await Room.findById(room_id).populate("messages")
 
-        const unreadCount = await Message.countDocuments({
-            room: room_id,
-            readBy: { $ne: req.userId },
-        });
-        // console.log(unreadCount)
-        res.status(200).send("ok")
+        const promises = messages.map(async (message) => {
 
-        // const message = await Message.findById(room_id)
-        //
-        // if (!message.readBy.includes(room_id)){
-        //     message.readBy.push(room_id)
-        //     await message.save();
-        // }
+            if (!message.readBy.includes(req.userId)){
+                message.readBy.push(req.userId)
+
+            }
+
+            return message.save()
+
+        })
+
+        const updatedMessages = await Promise.all(promises);
+
+        res.status(200).send(updatedMessages.pop())
+
+
     }
 
     async getUnreadMessage(req, res, next){
@@ -146,6 +146,19 @@ class ChatController{
 
 
         res.status(200).json({unreadCount})
+    }
+
+    async getLastMessageFromRoom(req, res, next){
+        const {params: { room_id }} = req.query;
+        try{
+            const room = await Room.findById(room_id).populate("messages")
+            const lastMessage = room.messages.pop()
+
+            res.status(200).json(lastMessage)
+
+        }catch (err){
+            console.log(err)
+        }
     }
 }
 

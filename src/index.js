@@ -31,7 +31,10 @@ io.on("connection", (socket) => {
 
     socket.on("join_room", async (data) => {
         socket.join(data.room_id);
+
         const messages = await Message.find({room: data.room_id})
+
+        const room  = await Room.findById(data.room_id).populate("messages")
 
         const promises = messages.map(async (message) => {
 
@@ -44,9 +47,10 @@ io.on("connection", (socket) => {
 
         })
 
-        await Promise.all(promises);
+        const updatedMessages = await Promise.all(promises);
 
-        socket.emit("readMessage")
+
+        socket.emit("readMessage", updatedMessages.pop())
 
 
     })
@@ -63,7 +67,9 @@ io.on("connection", (socket) => {
         newMessage.user = data.user._id
         newMessage.room = data.room
 
-        newMessage.readBy.push(data.user._id)
+        if (!newMessage.readBy.includes(data.user._id)){
+            newMessage.readBy.push(data.user._id)
+        }
 
         room.messages.push(newMessage)
 
@@ -73,13 +79,16 @@ io.on("connection", (socket) => {
 
         socket.to(data.room).emit(`receive_message_${data.room}`, data)
 
+        console.log(newMessage)
+        console.log(data)
+
         socket.broadcast.emit(data.room, data)
 
         socket.emit(data.room, data)
 
 
-
     })
+
 
 })
 

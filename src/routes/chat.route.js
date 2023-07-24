@@ -11,6 +11,7 @@ chatRoutes.get("/get-messages", verifyToken, chatController.getMessages)
 chatRoutes.get("/get-rooms", verifyToken, chatController.getRooms)
 chatRoutes.post("/read-message", verifyToken, chatController.readMessage)
 chatRoutes.get("/count-unread", verifyToken, chatController.getUnreadMessage)
+chatRoutes.get("/get-last", verifyToken, chatController.getLastMessageFromRoom)
 
 
 export default chatRoutes;
