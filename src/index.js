@@ -23,7 +23,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:3001",
+        origin: process.env.CLIENT,
         methods: ["GET", "POST"]
     }
 })
@@ -48,9 +48,10 @@ io.on("connection", (socket) => {
         })
 
         const updatedMessages = await Promise.all(promises);
+        const lastMessage = updatedMessages.pop()
 
-
-        socket.emit("readMessage", updatedMessages.pop())
+        socket.emit(`readMessage_${data.room_id}`, lastMessage)
+        socket.broadcast.emit(`readMessage_${data.room_id}`, lastMessage)
 
 
     })
@@ -79,13 +80,9 @@ io.on("connection", (socket) => {
 
         socket.to(data.room).emit(`receive_message_${data.room}`, data)
 
-        console.log(newMessage)
-        console.log(data)
-
         socket.broadcast.emit(data.room, data)
 
         socket.emit(data.room, data)
-
 
     })
 

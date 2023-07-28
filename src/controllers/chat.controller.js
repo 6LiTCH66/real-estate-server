@@ -109,6 +109,7 @@ class ChatController{
     async readMessage(req, res, next){
         const {params: { room_id }} = req.query;
 
+        // have to add try catch
         const messages = await Message.find({room: room_id})
         const room  = await Room.findById(room_id).populate("messages")
 
@@ -150,6 +151,7 @@ class ChatController{
 
     async getLastMessageFromRoom(req, res, next){
         const {params: { room_id }} = req.query;
+
         try{
             const room = await Room.findById(room_id).populate("messages")
             const lastMessage = room.messages.pop()
@@ -157,6 +159,7 @@ class ChatController{
             res.status(200).json(lastMessage)
 
         }catch (err){
+            // should change to actual error throw
             console.log(err)
         }
     }
