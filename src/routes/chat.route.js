@@ -12,6 +12,7 @@ chatRoutes.get("/get-rooms", verifyToken, chatController.getRooms)
 chatRoutes.post("/read-message", verifyToken, chatController.readMessage)
 chatRoutes.get("/count-unread", verifyToken, chatController.getUnreadMessage)
 chatRoutes.get("/get-last", verifyToken, chatController.getLastMessageFromRoom)
+chatRoutes.get("/count-all-unread", verifyToken, chatController.countAllUnreadMessages)
 
 
 export default chatRoutes;

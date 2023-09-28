@@ -135,13 +135,20 @@ class ChatController{
 
         const {params: { room_id }} = req.query;
 
-        // const countUnreadMessages = await Message.aggregate([
-        //     { $match: { readBy: { $ne: req.userId } } },
-        //     { $group: { _id: '$room', count: { $sum: 1 } } },
-        // ]);
+
 
         const unreadCount = await Message.countDocuments({
             room: room_id,
+            readBy: { $ne: req.userId },
+        });
+
+
+
+        res.status(200).json({unreadCount})
+    }
+    async countAllUnreadMessages(req, res, next){
+
+        const unreadCount = await Message.countDocuments({
             readBy: { $ne: req.userId },
         });
 
